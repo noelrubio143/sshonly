@@ -64,5 +64,11 @@ free -h
 
 # ===== vm.swappiness =====
 # Mataas para zram ang unang gamitin bago ang disk swap. Permanent via sysctl.d
+# Alisin ang ibang vm.swappiness na nag-o-override (hal. Alibaba image: /etc/sysctl.conf,
+# binabasa ito huli kaya nananalo laban sa sysctl.d). Kino-comment lang, hindi binubura.
+sudo sed -i '/^[[:space:]]*vm\.swappiness/s/^/#swap.sh# /' /etc/sysctl.conf 2>/dev/null
 echo 'vm.swappiness=100' | sudo tee /etc/sysctl.d/99-swap.conf >/dev/null
 sudo sysctl -p /etc/sysctl.d/99-swap.conf
+
+# Tiyakin na 100 ang aktibong value
+echo "vm.swappiness ngayon: $(cat /proc/sys/vm/swappiness)"
