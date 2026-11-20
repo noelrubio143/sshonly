@@ -5,7 +5,8 @@ command -v sudo >/dev/null 2>&1 || sudo() { "$@"; }
 
 # Define swap file size and location
 SWAPFILE=/swapfile
-SWAPSIZE=3G
+SWAPSIZE=6G
+SWAPMB=$(( ${SWAPSIZE%G} * 1024 ))   # para sa dd fallback (sumusunod sa SWAPSIZE)
 
 # I-off at tanggalin muna ang existing swapfile kung meron
 if sudo swapon --show | grep -q "$SWAPFILE"; then
@@ -14,7 +15,7 @@ fi
 sudo rm -f "$SWAPFILE"
 
 # Create a swap file
-sudo fallocate -l $SWAPSIZE $SWAPFILE || sudo dd if=/dev/zero of=$SWAPFILE bs=1M count=3072 status=none
+sudo fallocate -l $SWAPSIZE $SWAPFILE || sudo dd if=/dev/zero of=$SWAPFILE bs=1M count=$SWAPMB status=none
 
 # Set the correct permissions
 sudo chmod 600 $SWAPFILE
