@@ -333,12 +333,12 @@ GOEOF
 
 GO_OK=0
 
-# ---- Go compiler: tarball hosted in the gitlab project (no apt, no fallback) ----
+# ---- Go compiler: tarball hosted in the GitHub release (assets) (no apt, no fallback) ----
 # Intel/AMD (x86_64)
-GO_TGZ_URL_AMD64="https://gitlab.com/-/project/84844354/uploads/8b4f7af1af02f10a2c8d3792379bdcbc/go1.27.2.linux-amd64.tar.gz"
+GO_TGZ_URL_AMD64="https://github.com/noelrubio143/sshonly/releases/download/assets/go1.27.2.linux-amd64.tar.gz"
 GO_TGZ_SHA256_AMD64="ecbadb99091a3f46e31f5f934b068b1864eafa7995211b39eaddf76996045fe5"   # sha256 of go1.27.2.linux-amd64.tar.gz (https://go.dev/dl/) - REQUIRED
 # ARM (aarch64)
-GO_TGZ_URL_ARM64="https://gitlab.com/-/project/84844354/uploads/b399eb6ba478e9cd3f1ab2321b521380/go1.27.2.linux-arm64.tar.gz"
+GO_TGZ_URL_ARM64="https://github.com/noelrubio143/sshonly/releases/download/assets/go1.27.2.linux-arm64.tar.gz"
 GO_TGZ_SHA256_ARM64="94f3e30b8e374bc285e7dadc11e0865726b9bc6e85b841ccceaabc0214c6b7c8"   # sha256 of go1.27.2.linux-arm64.tar.gz - REQUIRED for ARM
 GO_TMP=/tmp/go-toolchain
 
@@ -357,7 +357,7 @@ esac
 [ -n "$GO_TGZ_SHA256" ] || go_fail "Go tarball sha256 is empty for $(uname -m) - set it in this script."
 
 rm -rf "$GO_TMP"; mkdir -p "$GO_TMP"
-wget -q -O "$GO_TMP/go.tgz" "$GO_TGZ_URL" || go_fail "Cannot download the Go tarball from gitlab."
+wget -q -O "$GO_TMP/go.tgz" "$GO_TGZ_URL" || go_fail "Cannot download the Go tarball from GitHub."
 echo "$GO_TGZ_SHA256  $GO_TMP/go.tgz" | sha256sum -c - >/dev/null 2>&1 || go_fail "Go tarball sha256 mismatch - refusing to use it."
 tar -C "$GO_TMP" -xzf "$GO_TMP/go.tgz" || go_fail "Cannot extract the Go tarball."
 GO_BIN="$GO_TMP/go/bin/go"
