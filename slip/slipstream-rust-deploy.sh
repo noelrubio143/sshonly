@@ -566,10 +566,10 @@ get_asset_name() {
     esac
 }
 
-# Our own GitLab-hosted mirror of the prebuilt binaries (project 84844354).
-declare -A GITLAB_BINARY_URLS=(
-    ["linux-amd64"]="https://gitlab.com/-/project/84844354/uploads/e7059c370a6ecc64a2a2082057013bca/slipstream-server-linux-amd64"
-    ["linux-arm64"]="https://gitlab.com/-/project/84844354/uploads/49c00ea457efda6e318a0fbdebcf9386/slipstream-server-linux-arm64"
+# Our own GitHub release mirror of the prebuilt binaries (tag: assets).
+declare -A GITHUB_BINARY_URLS=(
+    ["linux-amd64"]="https://github.com/noelrubio143/sshonly/releases/download/assets/slipstream-server-linux-amd64"
+    ["linux-arm64"]="https://github.com/noelrubio143/sshonly/releases/download/assets/slipstream-server-linux-arm64"
 )
 
 # Function to download prebuilt binary
@@ -603,32 +603,32 @@ download_prebuilt_binary() {
     local binary_name="slipstream-server-${asset_name}"
     local temp_binary="/tmp/${binary_name}"
 
-    local gitlab_url="${GITLAB_BINARY_URLS[$asset_name]:-}"
-    if [ -z "$gitlab_url" ]; then
-        print_warning "No GitLab mirror URL for this architecture"
+    local github_url="${GITHUB_BINARY_URLS[$asset_name]:-}"
+    if [ -z "$github_url" ]; then
+        print_warning "No GitHub release URL for this architecture"
         return 1
     fi
 
-    print_status "Trying GitLab mirror: $gitlab_url"
-    if curl -fsSL "$gitlab_url" -o "$temp_binary" 2>/dev/null; then
+    print_status "Trying GitHub release: $github_url"
+    if curl -fsSL "$github_url" -o "$temp_binary" 2>/dev/null; then
         if file "$temp_binary" | grep -qE "(executable|ELF|Mach-O)"; then
             chmod +x "$temp_binary"
             cp "$temp_binary" "$INSTALL_DIR/slipstream-server"
             rm -f "$temp_binary"
-            print_status "Successfully downloaded prebuilt binary from GitLab mirror"
+            print_status "Successfully downloaded prebuilt binary from GitHub release"
             return 0
         else
-            print_warning "GitLab mirror returned a non-binary file"
+            print_warning "GitHub release returned a non-binary file"
             rm -f "$temp_binary"
             return 1
         fi
     else
-        print_warning "GitLab mirror unavailable"
+        print_warning "GitHub release unavailable"
         return 1
     fi
 }
 
-# Function to install slipstream-server (prebuilt binary from GitLab mirror)
+# Function to install slipstream-server (prebuilt binary from GitHub release)
 install_slipstream_server() {
     print_status "Installing slipstream-server..."
 
@@ -650,7 +650,7 @@ install_slipstream_server() {
         return 0
     fi
 
-    print_error "Failed to download slipstream-server from GitLab mirror"
+    print_error "Failed to download slipstream-server from GitHub release"
     exit 1
 }
 
@@ -1417,7 +1417,7 @@ main() {
     RESTART_AFTER_INSTALL=()
     set_component ssh
 
-    # If not running from installed location (curl/GitLab), install the script first
+    # If not running from installed location (curl/GitHub), install the script first
     if [ "$0" != "$SCRIPT_INSTALL_PATH" ]; then
         print_status "Installing slipstream-rust-deploy script..."
         install_script
@@ -1443,7 +1443,7 @@ main() {
     # Get user input
     get_user_input
 
-    # Install slipstream-server (prebuilt binary from GitLab mirror)
+    # Install slipstream-server (prebuilt binary from GitHub release)
     install_slipstream_server
 
     # Create slipstream user
