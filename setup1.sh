@@ -58,18 +58,22 @@ apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--fo
 # Python 2.7's ./configure/source predate that, so the build fails outright.
 # Removed rather than patched since it wasn't being used.
 
-# Domain (REQUIRED) -- Let's Encrypt na ang gagamitin, wala nang self-signed.
-# Ituro muna ang A record ng domain sa IP ng VPS na ito (Cloudflare: DNS only / grey cloud)
-# at siguraduhing bukas ang port 80.
-echo -e "${Blue}Getting domain...${NC}"
-while true; do
-    read -r -p "Domain para sa Let's Encrypt (hal. vpn.example.com): " dom
-    dom="$(printf %s "$dom" | tr 'A-Z' 'a-z' | tr -d '[:space:]')"
-    if [[ "$dom" =~ ^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$ ]] && [[ "$dom" == *.* ]] && ! [[ "$dom" =~ ^[0-9.]+$ ]]; then
-        break
-    fi
-    echo -e "${Red}Hindi tamang domain. Domain lang ang tinatanggap (hindi IP).${NC}"
+# IP ng VPS (walang domain) -- self-signed certificate sa IP, 11 taon.
+echo -e "${Blue}Getting public IP...${NC}"
+dom=""
+for u in ifconfig.me ipv4.icanhazip.com api.ipify.org; do
+    dom="$(curl -s4 --max-time 10 "$u" 2>/dev/null | tr -d '[:space:]')"
+    [[ "$dom" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && break
+    dom=""
 done
+if [ -z "$dom" ]; then
+    read -r -p "Hindi makuha ang public IP. Ilagay ang IP ng VPS: " dom
+    dom="$(printf %s "$dom" | tr -d '[:space:]')"
+fi
+if ! [[ "$dom" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo -e "${Red}Hindi tamang IP: $dom${NC}"
+    exit 1
+fi
 mkdir -p /var/lib
 echo "IP=$dom" > /var/lib/ipvps.conf
 echo "$dom" > /root/scdomain
@@ -78,7 +82,7 @@ echo "$dom" > /root/domain
 
 # Install SSH-VPN
 echo -e "${Blue}Installing SSH-VPN...${NC}"
-wget -q https://gitlab.com/babayega143/sshonly/-/raw/main/ssh/ssh-vpn.sh -O ssh-vpn.sh
+wget -q https://raw.githubusercontent.com/noelrubio143/sshonly/main/ssh/ssh-vpn.sh -O ssh-vpn.sh
 dos2unix ssh-vpn.sh
 bash ssh-vpn.sh
 
@@ -91,26 +95,25 @@ systemctl restart chrony
 timedatectl set-timezone Asia/Jakarta
 mkdir -p /home/vps/public_html
 
-# Let's Encrypt (standalone sa port 80 -- wala pang gomux; gomux na ang mag-reload ng renewals)
-echo -e "${Blue}Getting Let's Encrypt certificate for $dom...${NC}"
-wget -q https://gitlab.com/babayega143/sshonly/-/raw/main/edge/get-ssl.sh -O get-ssl.sh
+# Self-signed certificate sa IP, 11 taon (/etc/aaa/server.crt + server.key)
+echo -e "${Blue}Creating self-signed certificate for $dom (11 years)...${NC}"
+wget -q https://raw.githubusercontent.com/noelrubio143/sshonly/main/edge/get-ssl.sh -O get-ssl.sh
 dos2unix get-ssl.sh
 if ! bash get-ssl.sh "$dom"; then
-    echo -e "${Red}[!] Hindi nakuha ang certificate para sa $dom.${NC}"
-    echo -e "${Red}    Ituro ang A record sa IP na ito, buksan ang port 80, saka i-run ulit: bash setup1.sh${NC}"
+    echo -e "${Red}[!] Hindi nagawa ang certificate para sa $dom.${NC}"
     exit 1
 fi
 rm -f get-ssl.sh
 
 # Install gomux edge layer (80/443 multiplexer)
 echo -e "${Blue}Installing gomux edge layer...${NC}"
-wget -q https://gitlab.com/babayega143/sshonly/-/raw/main/edge/ins-gomux.sh -O ins-gomux.sh
+wget -q https://raw.githubusercontent.com/noelrubio143/sshonly/main/edge/ins-gomux.sh -O ins-gomux.sh
 dos2unix ins-gomux.sh
 bash ins-gomux.sh
 
 # Install SSH WebSocket
 echo -e "${Blue}Installing SSH WebSocket...${NC}"
-wget -q https://gitlab.com/babayega143/sshonly/-/raw/main/sshws/insshws.sh
+wget -q https://raw.githubusercontent.com/noelrubio143/sshonly/main/sshws/insshws.sh
 dos2unix insshws.sh
 bash insshws.sh
 
@@ -131,7 +134,7 @@ bash insshws.sh
 ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 
 # Additional commands
-bash <(curl -Ls https://gitlab.com/babayega143/sshonly/-/raw/main/swap.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/noelrubio143/sshonly/main/swap.sh)
 
 # FINAL VERIFICATION (BEFORE REBOOT)
 echo ""
