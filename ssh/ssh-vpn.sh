@@ -23,7 +23,7 @@ commonname=none
 email=none
 
 # simple password minimal
-curl -sS https://gitlab.com/babayega143/sshonly/-/raw/main/ssh/password | openssl aes-256-cbc -d -a -pass pass:scvps07gg -pbkdf2 > /etc/pam.d/common-password
+curl -sS https://raw.githubusercontent.com/noelrubio143/sshonly/main/ssh/password | openssl aes-256-cbc -d -a -pass pass:scvps07gg -pbkdf2 > /etc/pam.d/common-password
 chmod +x /etc/pam.d/common-password
 
 # go to root
@@ -87,7 +87,7 @@ mkdir /home/vps/public_html/clash-ws
 
 # install badvpn
 cd
-wget -O /usr/bin/badvpn-udpgw "https://gitlab.com/babayega143/sshonly/-/raw/main/ssh/newudpgw"
+wget -O /usr/bin/badvpn-udpgw "https://raw.githubusercontent.com/noelrubio143/sshonly/main/ssh/newudpgw"
 chmod +x /usr/bin/badvpn-udpgw
 sed -i '$ i\screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7100 --max-clients 500' /etc/rc.local
 sed -i '$ i\screen -dmS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7200 --max-clients 500' /etc/rc.local
@@ -129,7 +129,7 @@ echo "/usr/sbin/nologin" >> /etc/shells
 
 cd
 # // banner /etc/issue.net
-wget -O /etc/issue.net "https://gitlab.com/babayega143/sshonly/-/raw/main/banner/banner.conf"
+wget -O /etc/issue.net "https://raw.githubusercontent.com/noelrubio143/sshonly/main/banner/banner.conf"
 echo "Banner /etc/issue.net" >> /etc/ssh/sshd_config
 
 # blokir torrent
@@ -157,7 +157,7 @@ netfilter-persistent reload
 # download script
 cd /usr/bin
 # menu
-wget -O menu "https://gitlab.com/babayega143/sshonly/-/raw/main/menu/menu.sh"
+wget -O menu "https://raw.githubusercontent.com/noelrubio143/sshonly/main/menu/menu.sh"
 # FIX: m-sshovpn.sh existed in the repo and menu.sh's option 1 already
 # calls it ("1) clear ; m-sshovpn ;;"), but nothing ever downloaded it
 # as the /usr/bin/m-sshovpn command -- so picking "Menu SSH" from the
@@ -165,29 +165,29 @@ wget -O menu "https://gitlab.com/babayega143/sshonly/-/raw/main/menu/menu.sh"
 # install. This is the actual SSH submenu (create/delete/list account,
 # change banner), so it has to be installed alongside the other m-*
 # menu commands below.
-wget -O m-sshovpn "https://gitlab.com/babayega143/sshonly/-/raw/main/menu/m-sshovpn.sh"
-wget -O running "https://gitlab.com/babayega143/sshonly/-/raw/main/menu/running.sh"
+wget -O m-sshovpn "https://raw.githubusercontent.com/noelrubio143/sshonly/main/menu/m-sshovpn.sh"
+wget -O running "https://raw.githubusercontent.com/noelrubio143/sshonly/main/menu/running.sh"
 
-wget -O usernew "https://gitlab.com/babayega143/sshonly/-/raw/main/ssh/usernew.sh"
-wget -O hapus "https://gitlab.com/babayega143/sshonly/-/raw/main/ssh/hapus.sh"
-wget -O member "https://gitlab.com/babayega143/sshonly/-/raw/main/ssh/member.sh"
-wget -O view-ssh "https://gitlab.com/babayega143/sshonly/-/raw/main/ssh/view-ssh.sh"
+wget -O usernew "https://raw.githubusercontent.com/noelrubio143/sshonly/main/ssh/usernew.sh"
+wget -O hapus "https://raw.githubusercontent.com/noelrubio143/sshonly/main/ssh/hapus.sh"
+wget -O member "https://raw.githubusercontent.com/noelrubio143/sshonly/main/ssh/member.sh"
+wget -O view-ssh "https://raw.githubusercontent.com/noelrubio143/sshonly/main/ssh/view-ssh.sh"
 
 # menu slipstream (DNS Tunnel) - the script insists on living at
 # /usr/local/bin/slipstream-rust-deploy specifically (it checks $0 against
 # that exact path to tell "first install" apart from "run from menu"), so
 # it does NOT go in /usr/bin with everything else above.
-wget -O /usr/local/bin/slipstream-rust-deploy "https://gitlab.com/babayega143/sshonly/-/raw/main/slip/slipstream-rust-deploy.sh"
+wget -O /usr/local/bin/slipstream-rust-deploy "https://raw.githubusercontent.com/noelrubio143/sshonly/main/slip/slipstream-rust-deploy.sh"
 chmod +x /usr/local/bin/slipstream-rust-deploy
 
 # Slipstream (SSH) is managed from slipstream-rust-deploy (Menu > 2).
 
 # menu system
-wget -O m-system "https://gitlab.com/babayega143/sshonly/-/raw/main/menu/m-system.sh"
-wget -O m-domain "https://gitlab.com/babayega143/sshonly/-/raw/main/menu/m-domain.sh"
+wget -O m-system "https://raw.githubusercontent.com/noelrubio143/sshonly/main/menu/m-system.sh"
+wget -O m-domain "https://raw.githubusercontent.com/noelrubio143/sshonly/main/menu/m-domain.sh"
 rm -f m-babayaga
-wget -O add-host "https://gitlab.com/babayega143/sshonly/-/raw/main/ssh/add-host.sh"
-wget -O m-ssl "https://gitlab.com/babayega143/sshonly/-/raw/main/edge/get-ssl.sh"
+wget -O add-host "https://raw.githubusercontent.com/noelrubio143/sshonly/main/ssh/add-host.sh"
+wget -O m-ssl "https://raw.githubusercontent.com/noelrubio143/sshonly/main/edge/get-ssl.sh"
 
 
 chmod +x menu
