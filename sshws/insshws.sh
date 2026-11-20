@@ -304,7 +304,7 @@ EOF
 systemctl daemon-reload
 
 #Diagnostic script
-wget -O /usr/local/bin/check-sshws.sh https://gitlab.com/babayega143/sshonly/-/raw/main/sshws/check-sshws.sh
+wget -O /usr/local/bin/check-sshws.sh https://raw.githubusercontent.com/noelrubio143/sshonly/main/sshws/check-sshws.sh
 chmod +x /usr/local/bin/check-sshws.sh
 
 # ========== PART 3: Start services ==========
