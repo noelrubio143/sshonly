@@ -26,7 +26,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Global variables
-SCRIPT_URL="https://gitlab.com/babayega143/sshonly/-/raw/main/slip/slipstream-rust-deploy.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/noelrubio143/sshonly/main/slip/slipstream-rust-deploy.sh"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="/etc/slipstream-rust"
 SYSTEMD_DIR="/etc/systemd/system"
