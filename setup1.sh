@@ -27,6 +27,14 @@ if [ "$(systemd-detect-virt)" == "openvz" ]; then
     exit 1
 fi
 
+# Swap muna bago ang lahat (pinakauna) -- para may swap na habang nagko-compile
+# ng gomux/ws-go sa maliit na RAM (hal. 700 MB). Permanente ito (naka-fstab).
+echo -e "${Blue}Setting up swap...${NC}"
+curl -fsSL https://raw.githubusercontent.com/noelrubio143/sshonly/main/swap.sh -o /root/swap.sh \
+    && sed -i 's/\r$//' /root/swap.sh && bash /root/swap.sh \
+    || echo -e "${Yellow}[!] Hindi nagawa ang swap, itutuloy pa rin ang install.${NC}"
+rm -f /root/swap.sh
+
 # Prevent apt/dpkg from ever popping an interactive prompt (tzdata,
 # config-file conflicts, needrestart's "which services to restart?"
 # checklist, etc.) - without this, installs can silently hang forever
@@ -133,8 +141,6 @@ bash insshws.sh
 # Setup environment
 ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 
-# Additional commands
-bash <(curl -Ls https://raw.githubusercontent.com/noelrubio143/sshonly/main/swap.sh)
 
 # FINAL VERIFICATION (BEFORE REBOOT)
 echo ""

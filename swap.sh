@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Kung walang sudo (minimal Debian/Ubuntu), tumakbo nang direkta bilang root
+command -v sudo >/dev/null 2>&1 || sudo() { "$@"; }
+
 # Define swap file size and location
 SWAPFILE=/swapfile
 SWAPSIZE=3G
@@ -11,7 +14,7 @@ fi
 sudo rm -f "$SWAPFILE"
 
 # Create a swap file
-sudo fallocate -l $SWAPSIZE $SWAPFILE
+sudo fallocate -l $SWAPSIZE $SWAPFILE || sudo dd if=/dev/zero of=$SWAPFILE bs=1M count=3072 status=none
 
 # Set the correct permissions
 sudo chmod 600 $SWAPFILE
